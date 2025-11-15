@@ -101,17 +101,40 @@ async function seedRevenue() {
   return insertedRevenue;
 }
 
+// export async function GET() {
+//   try {
+//     const result = await sql.begin((sql) => [
+//       seedUsers(),
+//       seedCustomers(),
+//       seedInvoices(),
+//       seedRevenue(),
+//     ]);
+
+//     return Response.json({ message: 'Database seeded successfully' });
+//   } catch (error) {
+//     return Response.json({ error }, { status: 500 });
+//   }
+// }
+
 export async function GET() {
   try {
-    const result = await sql.begin((sql) => [
-      seedUsers(),
-      seedCustomers(),
-      seedInvoices(),
-      seedRevenue(),
-    ]);
+    await sql.begin(async (sqlTx) => {
+      // Внутри транзакции ждём каждую функцию
+      await seedUsers();
+      await seedCustomers();
+      await seedInvoices();
+      await seedRevenue();
+    });
 
-    return Response.json({ message: 'Database seeded successfully' });
+    return new Response(JSON.stringify({ message: 'Database seeded successfully' }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
-    return Response.json({ error }, { status: 500 });
+    console.error('Seed error:', error);
+    return new Response(JSON.stringify({ error: error }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 500,
+    });
   }
 }
