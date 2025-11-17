@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import postgres from 'postgres';
-import { signIn } from '@/auth';
+import { signIn } from '@/app/lib/auth/auth';
 import { AuthError } from 'next-auth';
 
 export type State = {
@@ -35,11 +35,6 @@ const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
  
 export async function createInvoice(formData: FormData) {
-    // const { customerId, amount, status } = CreateInvoice.parse({
-    //     customerId: formData.get('customerId'),
-    //     amount: formData.get('amount'),
-    //     status: formData.get('status'),
-    // });
 
     const validatedFields = CreateInvoice.safeParse({
         customerId: formData.get('customerId'),
@@ -73,13 +68,6 @@ export async function createInvoice(formData: FormData) {
 
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
-    // const rawFormData = {
-    //     customerId: formData.get('customerId'),
-    //     amount: formData.get('amount'),
-    //     status: formData.get('status'),
-    // }
-
-    // console.log(rawFormData);
 }
 
 export async function updateInvoice(
@@ -87,11 +75,6 @@ export async function updateInvoice(
     prevState: State,
     formData: FormData
 ) {
-//   const { customerId, amount, status } = UpdateInvoice.parse({
-//     customerId: formData.get('customerId'),
-//     amount: formData.get('amount'),
-//     status: formData.get('status'),
-//   });
 
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get('customerId'),
