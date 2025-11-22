@@ -7,27 +7,19 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useState } from 'react';
 import { authenticate } from '@/app/lib/actions';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  const [ state, formAction, isPending] = useActionState(
+  
+  const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
   );
-
-  useEffect(() => {
-    if (state?.startsWith("OK:")) {
-      router.push(state.replace("OK:", ""));
-    }
-  }, [state, router]);
-
-  const errorMessage = state?.startsWith("OK:") ? undefined : state;
-
+  console.log(searchParams, callbackUrl, formAction)
   return (
     <form action={formAction} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">

@@ -99,7 +99,6 @@ export async function updateInvoice(
         WHERE id = ${id}
       `;
   } catch (error) {
-    // We'll also log the error to the console for now
     console.error(error);
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
@@ -109,8 +108,6 @@ export async function updateInvoice(
 }
 
 export async function deleteInvoice(id: string) {
-    // throw new Error('Failed to Delete Invoice');
-
   await sql`DELETE FROM invoices WHERE id = ${id}`;
   revalidatePath('/dashboard/invoices');
 }
@@ -120,20 +117,7 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    const redirectTo = formData.get("redirectTo") || "/dashboard";
-    // await signIn('credentials', formData);
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: formData.get("email"),
-      password: formData.get("password"),
-    });
-
-    if (!res?.error) {
-      // return "success";
-      return `OK:${redirectTo}`;
-    }
-
-    return "Invalid credentials.";
+    await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
