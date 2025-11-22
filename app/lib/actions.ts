@@ -120,7 +120,20 @@ export async function authenticate(
   formData: FormData,
 ) {
   try {
-    await signIn('credentials', formData);
+    const redirectTo = formData.get("redirectTo") || "/dashboard";
+    // await signIn('credentials', formData);
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+
+    if (!res?.error) {
+      // return "success";
+      return `OK:${redirectTo}`;
+    }
+
+    return "Invalid credentials.";
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

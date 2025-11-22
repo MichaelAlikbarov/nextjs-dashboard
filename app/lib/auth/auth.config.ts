@@ -1,11 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
- 
-// export const authConfig = {
-//     pages: {
-//         signIn: '/login',
-//     },
-//     providers: []
-// } satisfies NextAuthConfig;
+import { NextResponse } from 'next/server';
  
 export const authConfig = {
   pages: {
@@ -17,12 +11,12 @@ export const authConfig = {
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       if (isOnDashboard) {
         if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
+        return false;
       } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+        return NextResponse.redirect(new URL('/dashboard'));
       }
       return true;
     },
   },
-  providers: [], // Add providers with an empty array for now
+  providers: [],
 } satisfies NextAuthConfig;

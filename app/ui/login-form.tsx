@@ -7,17 +7,26 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { authenticate } from '@/app/lib/actions';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  const [errorMessage, formAction, isPending] = useActionState(
+  const [ state, formAction, isPending] = useActionState(
     authenticate,
     undefined,
   );
+
+  useEffect(() => {
+    if (state?.startsWith("OK:")) {
+      router.push(state.replace("OK:", ""));
+    }
+  }, [state, router]);
+
+  const errorMessage = state?.startsWith("OK:") ? undefined : state;
 
   return (
     <form action={formAction} className="space-y-3">
@@ -83,3 +92,5 @@ export default function LoginForm() {
     </form>
   );
 }
+
+
